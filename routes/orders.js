@@ -34,6 +34,7 @@ router.get("/orders/:id", (req, res, next) => {
 
 router.post("/orders", (req, res, next) => {
     const { order_customer_name, order_customer_phone_number, resturant_id, existingCart } = req.body
+    //https://node-postgres.com/features/transactions according to docs, must use client.query for transaction, instead of pool.query
         ; (async () => {
             const client = await pool.connect()
             try {
