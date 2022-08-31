@@ -36,7 +36,6 @@
     "finalhandler": "^1.2.0",
     "forwarded": "^0.2.0",
     "fresh": "^0.5.2",
-    "fsevents": "^2.3.2",
     "function-bind": "^1.1.1",
     "get-intrinsic": "^1.1.2",
     "glob-parent": "^5.1.2",
@@ -125,5 +124,7 @@
     "url": "https://github.com/samleungskl/noodles-world-api/issues"
   },
   "homepage": "https://github.com/samleungskl/noodles-world-api#readme",
-  "optionalDependencies": { "fsevents": "2.x.x" }
+  "optionalDependencies": {
+    "fsevents": "2.x.x"
+  }
 }

@@ -33,11 +33,11 @@ router.get("/line_items/:id", (req, res, next) => {
 })
 
 router.post("/line_items", (req, res, next) => {
-    const { line_items_name, line_items_description, line_items_price } = req.body
+    const { line_items_name, line_items_price } = req.body
 
     pool.query(
-        'INSERT INTO line_items (line_items_name, line_items_description, line_items_price) VALUES ($1, $2, $3)',
-        [line_items_name, line_items_description, line_items_price],
+        'INSERT INTO line_items (line_items_name, line_items_price) VALUES ($1, $2)',
+        [line_items_name, line_items_price],
         (error) => {
             if (error) {
                 throw error
@@ -52,8 +52,8 @@ router.put("/line_items/:id", (req, res, next) => {
     const { line_items_name, line_items_description, line_items_price } = req.body
 
     pool.query(
-        'UPDATE line_items SET line_items_name=$1 , line_items_description=$2, line_items_price=$3 WHERE line_items_id=$4',
-        [line_items_name, line_items_description, line_items_price, id],
+        'UPDATE line_items SET line_items_name=$1, line_items_price=$2 WHERE line_items_id=$3',
+        [line_items_name, line_items_description, id],
         (error) => {
             if (error) {
                 throw error

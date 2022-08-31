@@ -90,10 +90,9 @@ CREATE TABLE line_items (
   line_item_id SERIAL PRIMARY KEY NOT NULL,
   order_id INTEGER REFERENCES orders (order_id) NOT NULL,
   line_item_name TEXT NOT NULL,
-  line_item_description TEXT NOT NULL,
   line_item_price NUMERIC NOT NULL
 );
 
-INSERT INTO line_items (order_id, line_item_name, line_item_description, line_item_price)
-VALUES (1,'Mee Goreng', 'Malaysian', 19.99),
-(1,'Mee Goreng', 'Malaysian', 19.99);
+INSERT INTO line_items (order_id, line_item_name, line_item_price)
+VALUES (1,'Mee Goreng', 19.99),
+(1,'Mee Goreng', 19.99);
