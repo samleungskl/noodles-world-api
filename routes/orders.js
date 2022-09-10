@@ -33,18 +33,44 @@ router.get("/orders/:id", (req, res, next) => {
 
 
 router.post("/orders", (req, res, next) => {
-    const { order_customer_name, order_customer_phone_number,resturant_id } = req.body
-
-    pool.query(
-        'INSERT INTO orders (order_customer_name, order_customer_phone_number,resturant_id) VALUES ($1, $2, $3)',
-        [order_customer_name, order_customer_phone_number,resturant_id],
-        (error) => {
-            if (error) {
-                throw error
+    const { order_customer_name, order_customer_phone_number, resturant_id, existingCart } = req.body
+        //https://node-postgres.com/features/transactions according to docs, must use client.query for transaction, instead of pool.query
+        ; (async () => {
+            const client = await pool.connect()
+            try {
+                await client.query('BEGIN')
+                const queryText = 'INSERT INTO orders (order_customer_name, order_customer_phone_number,resturant_id) VALUES ($1, $2, $3) RETURNING order_id;'
+                const response = await client.query(queryText, [order_customer_name, order_customer_phone_number, resturant_id])
+                let queryLineItem = 'INSERT INTO line_items (line_item_name, line_item_price, order_id) VALUES'
+                let preparedArray = [];
+                let counter = 0;
+                const orderId = response.rows[0].order_id
+                await existingCart.forEach((element, index) => {
+                    //turn object into array and push into prepared Array
+                    preparedArray.push(Object.values(element))
+                    preparedArray.push(orderId)
+                    queryLineItem += `($${counter + 1}, $${counter + 2}, $${counter + 3})`
+                    counter += 3;
+                    if (index !== existingCart.length - 1) {
+                        queryLineItem += ', '
+                    } else {
+                        queryLineItem += ';'
+                    }
+                });
+                const flattenedArray = preparedArray.flatMap(num => num);
+                console.log('queryLineItem', queryLineItem)
+                console.log('flattened', flattenedArray)
+                await client.query(queryLineItem, flattenedArray)
+                await client.query('COMMIT');
+                res.status(201).json({ status: 'success', message: 'Order and line_items added.', orderId: orderId });
+            } catch (e) {
+                await client.query('ROLLBACK');
+                console.log('data not commited. Rolling back.');
+                throw e
+            } finally {
+                client.release()
             }
-            res.status(201).json({ status: 'success', message: 'Order added.' })
-        }
-    )
+        })().catch(e => console.error(e.stack))
 })
 
 router.put("/orders/:id", (req, res, next) => {
