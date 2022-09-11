@@ -8,7 +8,7 @@ const { pool } = require('../config')
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 
-const {validatePhoneNumber} = require('../helpers/validatePhoneNumber.js');
+const { validatePhoneNumber } = require('../helpers/validatePhoneNumber.js');
 router.get("/track", (req, res, next) => {
     const { orderPhoneNumber } = req.query;
     console.log('orderPhoneNumber', orderPhoneNumber)
